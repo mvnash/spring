@@ -1,0 +1,7 @@
+Lombok (code + facile)
+H2 Database (si DB)
+Spring Data JPA (si DB)
+OpenFeign (Si se connecte a d'autre service)
+Eureka Discovery Client (client)
+Eureka Server (eureka service)(=fait le routing entre tous les clients)
+Spring Web (toujours sauf si eureka server)
