@@ -1,9 +1,9 @@
 package be.ipl.spring.wishlists;
 
-import be.vinci.ipl.catflix.reviews.models.Review;
-import be.vinci.ipl.catflix.reviews.models.Video;
-import be.vinci.ipl.catflix.reviews.repositories.ReviewsRepository;
-import be.vinci.ipl.catflix.reviews.repositories.VideosProxy;
+import be.ipl.spring.wishlists.models.Video;
+import be.ipl.spring.wishlists.models.Wishlist;
+import be.ipl.spring.wishlists.repositories.VideosProxy;
+import be.ipl.spring.wishlists.repositories.WishlistsRepository;
 import jakarta.persistence.Tuple;
 import org.springframework.stereotype.Service;
 
@@ -12,24 +12,24 @@ import java.util.stream.StreamSupport;
 @Service
 public class WishlistsService {
 
-    private final ReviewsRepository repository;
+    private final WishlistsRepository repository;
     private final VideosProxy videosProxy;
 
-    public WishlistsService(ReviewsRepository repository, VideosProxy videosProxy) {
+    public WishlistsService(WishlistsRepository repository, VideosProxy videosProxy) {
         this.repository = repository;
         this.videosProxy = videosProxy;
     }
 
     /**
      * Creates a review in repository
-     * @param review Review to create
+     * @param  wishlist to create
      * @return true if the review was created, false if another review exists with the same pseudo and hash
      */
-    public boolean createOne(Review review) {
-        if (repository.existsByPseudoAndHash(review.getPseudo(), review.getHash())) {
+    public boolean createOne(Wishlist wishlist) {
+        if (repository.existsById(wishlist.getId())) {
             return false;
         }
-        repository.save(review);
+        repository.save(wishlist);
         return true;
     }
 
@@ -39,7 +39,7 @@ public class WishlistsService {
      * @param hash Hash of the video being reviewed
      * @return The review, or null if the review couldn't be found
      */
-    public Review readOne(String pseudo, String hash) {
+    public Wishlist readOne(String pseudo, String hash) {
         return repository.findByPseudoAndHash(pseudo, hash).orElse(null);
     }
 
@@ -48,12 +48,12 @@ public class WishlistsService {
      * @param newReview New values of the review
      * @return true if the review was updated, or false if the review couldn't be found
      */
-    public boolean updateOne(Review newReview) {
-        Review oldReview = repository.findByPseudoAndHash(newReview.getPseudo(), newReview.getHash()).orElse(null);
-        if (oldReview == null) return false;
+    public boolean updateOne(Wishlist newWishlist) {
+        Wishlist oldWishlist = repository.findByPseudoAndHash(newWishlist.getPseudo(), newWishlist.getHash()).orElse(null);
+        if (oldWishlist == null) return false;
 
-        newReview.setId(oldReview.getId());
-        repository.save(newReview);
+        newWishlist.setId(oldWishlist.getId());
+        repository.save(newWishlist);
         return true;
     }
 
@@ -75,7 +75,7 @@ public class WishlistsService {
      * @param pseudo Pseudo of the user
      * @return The list of reviews from this user
      */
-    public Iterable<Review> readFromUser(String pseudo) {
+    public Iterable<Wishlist> readFromUser(String pseudo) {
         return repository.findByPseudo(pseudo);
     }
 
@@ -93,7 +93,7 @@ public class WishlistsService {
      * @param hash Hash of the video
      * @return The list of reviews of this video
      */
-    public Iterable<Review> readFromVideo(String hash) {
+    public Iterable<Wishlist> readFromVideo(String hash) {
         return repository.findByHash(hash);
     }
 

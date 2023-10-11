@@ -1,6 +1,6 @@
 package be.ipl.spring.wishlists.repositories;
 
-import be.vinci.ipl.catflix.reviews.models.Review;
+import be.ipl.spring.wishlists.models.Wishlist;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Query;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface WishlistsRepository extends CrudRepository<Review, Long> {
+public interface WishlistsRepository extends CrudRepository<Wishlist, Long> {
 
     boolean existsByPseudoAndHash(String pseudo, String hash);
-    Optional<Review> findByPseudoAndHash(String pseudo, String hash);
+    Optional<Wishlist> findByPseudoAndHash(String pseudo, String hash);
 
     @Transactional
     void deleteByPseudoAndHash(String pseudo, String hash);
@@ -24,10 +24,7 @@ public interface WishlistsRepository extends CrudRepository<Review, Long> {
     @Transactional
     void deleteByHash(String hash);
 
-    Iterable<Review> findByPseudo(String pseudo);
-    Iterable<Review> findByHash(String hash);
-
-    @Query("select hash as videoHash, avg(rating) as avgRating from reviews group by hash order by avgRating desc")
-    Iterable<Tuple> findBest();
+    Iterable<Wishlist> findByPseudo(String pseudo);
+    Iterable<Wishlist> findByHash(String hash);
 
 }

@@ -10,16 +10,13 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "reviews")
+@NoArgsConstructor
+@Entity(name = "wishlists")
 public class Wishlist {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private long id;
-    private String pseudo;
-    private String hash;
-    private int rating; // between 0 and 10
-    private String comment;
+    private Long id;
+    private int clientId;
+    private int productId;
+
 }
