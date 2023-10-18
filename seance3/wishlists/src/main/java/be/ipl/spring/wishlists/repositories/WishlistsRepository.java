@@ -12,19 +12,17 @@ import java.util.Optional;
 @Repository
 public interface WishlistsRepository extends CrudRepository<Wishlist, Long> {
 
-    boolean existsByPseudoAndHash(String pseudo, String hash);
-    Optional<Wishlist> findByPseudoAndHash(String pseudo, String hash);
+    boolean existsById(Long id);
+
+    Optional<Wishlist> findByUser(String userPseudo);
 
     @Transactional
-    void deleteByPseudoAndHash(String pseudo, String hash);
+    void deleteById(Long id);
 
     @Transactional
-    void deleteByPseudo(String pseudo);
+    void deleteByUser(String pseudo);
 
     @Transactional
-    void deleteByHash(String hash);
-
-    Iterable<Wishlist> findByPseudo(String pseudo);
-    Iterable<Wishlist> findByHash(String hash);
+    void deleteByProduct(int product);
 
 }

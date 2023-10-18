@@ -7,6 +7,7 @@ import be.ipl.spring.wishlists.repositories.WishlistsRepository;
 import jakarta.persistence.Tuple;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -36,36 +37,20 @@ public class WishlistsService {
     /**
      * Reads a review in repository
      * @param pseudo Pseudo of the user reviewing
-     * @param hash Hash of the video being reviewed
      * @return The review, or null if the review couldn't be found
      */
-    public Wishlist readOne(String pseudo, String hash) {
-        return repository.findByPseudoAndHash(pseudo, hash).orElse(null);
-    }
-
-    /**
-     * Updates a review in repository
-     * @param newReview New values of the review
-     * @return true if the review was updated, or false if the review couldn't be found
-     */
-    public boolean updateOne(Wishlist newWishlist) {
-        Wishlist oldWishlist = repository.findByPseudoAndHash(newWishlist.getPseudo(), newWishlist.getHash()).orElse(null);
-        if (oldWishlist == null) return false;
-
-        newWishlist.setId(oldWishlist.getId());
-        repository.save(newWishlist);
-        return true;
+    public Wishlist readOne(String pseudo) {
+        return repository.findByUser(pseudo).orElse(null);
     }
 
     /**
      * Deletes a review from repository
      * @param pseudo Pseudo of the user reviewing
-     * @param hash   Hash of the video being reviewed
      * @return true if the review was deleted, or false if the review couldn't be found
      */
-    public boolean deleteOne(String pseudo, String hash) {
-        if (!repository.existsByPseudoAndHash(pseudo, hash)) return false;
-        repository.deleteByPseudoAndHash(pseudo, hash);
+    public boolean deleteOne(String pseudo) {
+        if (repository.findByUser(pseudo).isEmpty()) return false;
+        repository.deleteByUser(pseudo);
         return true;
     }
 
@@ -75,8 +60,8 @@ public class WishlistsService {
      * @param pseudo Pseudo of the user
      * @return The list of reviews from this user
      */
-    public Iterable<Wishlist> readFromUser(String pseudo) {
-        return repository.findByPseudo(pseudo);
+    public Optional<Wishlist> readFromUser(String pseudo) {
+        return repository.findByUser(pseudo);
     }
 
     /**
@@ -84,41 +69,14 @@ public class WishlistsService {
      * @param pseudo Pseudo of the user
      */
     public void deleteFromUser(String pseudo) {
-        repository.deleteByPseudo(pseudo);
-    }
-
-
-    /**
-     * Reads all reviews of a video
-     * @param hash Hash of the video
-     * @return The list of reviews of this video
-     */
-    public Iterable<Wishlist> readFromVideo(String hash) {
-        return repository.findByHash(hash);
+        repository.deleteByUser(pseudo);
     }
 
     /**
-     * Deletes all reviews of a video
-     * @param hash Hash of the video
+     * Deletes all reviews from a user
+     * @param product Pseudo of the user
      */
-    public void deleteFromVideo(String hash) {
-        repository.deleteByHash(hash);
+    public void deleteFromProduct(int product) {
+        repository.deleteByProduct(product);
     }
-
-
-    /**
-     * Finds the 3 best videos by average ranking of users
-     * @return the list of videos
-     */
-    public Iterable<Video> best3Videos() {
-        Iterable<Tuple> bests = repository.findBest();
-        return StreamSupport.stream(bests.spliterator(), false)
-                .limit(3)
-                .map(best -> {
-                    String hash = (String) best.get("videoHash");
-                    return videosProxy.readOne(hash);
-                })
-                .toList();
-    }
-
 }

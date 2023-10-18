@@ -16,7 +16,7 @@ import lombok.*;
 public class Wishlist {
     @Id
     private Long id;
-    private int clientId;
+    private String pseudo;
     private int productId;
 
 }
